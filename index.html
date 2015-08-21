@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<head>
+	<title>Traumatic Brain Injury</title>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<style type="text/css">
+		body{
+			background-color: rgba(0,0,0,.85);
+		}
+		h1, h4{
+			color: white;
+		}
+		#element{
+			position: relative;
+		}
+		#text{
+			border: solid white 2px;
+			background-color: black;
+			padding: 10px;
+			display: block;
+		}
+		.axis path,
+			.axis line {
+				fill: none;
+				stroke: white;
+				shape-rendering: crispEdges;
+			}
+			
+			.axis text {
+				font-family: sans-serif;
+				font-size: 11px;
+				color: white;
+			}	
+		.d3-tip {
+  			line-height: 1;
+  			font-weight: bold;
+  			padding: 12px;
+  			background: rgba(0, 0, 0, 0.8);
+  			color: #fff;
+  			border-radius: 2px;
+		}
+
+/* Creates a small triangle extender for the tooltip */
+		.d3-tip:after {
+  			box-sizing: border-box;
+  			display: inline;
+  			font-size: 10px;
+  			width: 100%;
+  			line-height: 1;
+  			color: rgba(0, 0, 0, 0.8);
+  			content: "\25BC";
+  			position: absolute;
+  			text-align: center;
+		}
+
+/* Style northward tooltips differently */
+		.d3-tip.n:after {
+  			margin: -1px 0 0 0;
+  			top: 100%;
+  			left: 0;
+		}
+	</style>
+</head>
+<body>
+	<div id="container">
+		<div id="text">
+		<h1>CDC Statistics on Traumatic Brain Injury 2001-2010</h1>
+		<h4>The graph below shows data culminated by the Center for Disease Control from the years 2001 to 2010. The blue circles represnt males while the red represents females. Each of these traumatic brain injuries resulted in either an ER visit, hospitalization, or death.</h4>
+		</div>
+		 <svg width="500" height="100">
+			<div id="element"></div>
+			<div id="xAxis"></div>
+		</svg>
+		<script type="text/javascript">
+			//variables//
+			var female =[420.9, 419.3, 426.3, 275.9, 503.9, 504.7, 502.5, 599, 607.6, 720.3];
+			var male = [626.4, 660.6, 649.8, 732.1, 732.3, 689.6, 634.1, 863.6, 982.3, 932.1];
+			var year =[2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010];
+			var w = 1200;
+			var h =800;
+			var padding = 20;
+			//var tip = d3.tip()
+						//.attr('class', 'd3-tip')
+						//.offset([-10,0])
+						//.html(function(d) {
+    					//	return "<strong>Injured</strong> <span style='color:red'>" + circles.data(female).enter() + "</span>";
+  						//});
+			//select the body, +=svg & set parameters// 
+			var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
+			//create circle and bind to female array//
+			var circles = svg.selectAll("circle")
+			  				.data(female)
+			  				.enter()
+			  				.append("circle")
+			  				//.on("mouseover", tip.show)
+			  				//.on("mouseout", tip.hide); 
+			 circles.attr("fill", "red");
+			circles.attr("cx", function(d,i){
+						return (i*100)+100;
+					})
+					.attr("cy", function(d, i){
+						return (h/.78)-d;
+					})
+					.attr("r", function(d){
+						return (d/24);
+					});
+			
+		var newCircles = svg.selectAll("#element")
+			  				.data(male)
+			  				.enter()
+			  				.append("circle");
+			 newCircles.attr("fill", "blue");
+			newCircles.attr("cx", function(d,i){
+						return (i*100)+100;
+					})
+					.attr("cy", function(d, i){
+						return (h/.78)-d;
+					})
+					.attr("r", function(d){
+						return (d/24);
+					});
+		//svg.call(tip);
+		var xScale = d3.scale.linear()
+						.domain([0, d3.max(female, function(d) { })])
+						.range([padding, w - padding * 2]);
+		var yScale = d3.scale.linear()
+							 .domain([0, d3.max(male, function(d) { return d[1]; })])
+							 .range([h - padding, padding]);
+
+		var rScale = d3.scale.linear()
+							 .domain([0, d3.max(male, function(d) { return d[1]; })])
+							 .range([2, 5]);
+		var xAxis = d3.svg.axis()
+						  .scale(xScale)
+						  .orient("bottom")
+						  .ticks(5)
+						  .tickValues(2001,2010);
+
+						  svg.append("g")
+				   		     .attr("class", "axis")
+				             .attr("transform", "translate(0 , " + (h - padding) + ")")
+				             .call(xAxis);
+
+		var yAxis = d3.svg.axis()
+                          .scale(yScale)
+                          .orient("left")
+                          .ticks(5);
+        	
+        	            svg.append("g")
+    			           .attr("class", "axis")
+    			           .attr("transform", "translate(" + padding + ",0)")
+   				           .call(yAxis);
+   		function type(d) {
+  			d.female = +d.female;
+  				return d;
+			}
+		</script>
+	</div>
+</body>
+</html>
